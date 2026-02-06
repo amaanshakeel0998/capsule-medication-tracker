@@ -274,7 +274,8 @@ The AI model automatically trains when you have at least **10 historical records
 
 ## 👨‍💻 Developer Information
 
-**Project Type**: Artificial Intelligence Semester Project  
+**Project Type**: Artificial Intelligence Semester Project 
+**Developer Name**: Muhammad Amaan
 **Difficulty Level**: Beginner-Friendly  
 **Estimated Completion Time**: 4-6 weeks  
 **Lines of Code**: ~1500  
