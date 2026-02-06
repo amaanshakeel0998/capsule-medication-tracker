@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reports - Capsule Medication Tracker</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div>
+                <h1>💊 Capsule Medication Tracker</h1>
+                <p class="header-subtitle">AI-Powered Medication Management System</p>
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <nav class="nav">
+            <ul>
+                <li><a href="/">Dashboard</a></li>
+                <li><a href="/add-medication">Add Medication</a></li>
+                <li><a href="/schedule">Schedule</a></li>
+                <li><a href="/reports">Reports</a></li>
+                <li><a href="/ai-insights">AI Insights</a></li>
+            </ul>
+        </nav>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <h2 class="page-title">Reports & Statistics</h2>
+            <p class="page-description">Detailed analysis of your medication adherence</p>
+
+            <!-- Adherence Overview -->
+            <div class="card">
+                <h3 class="card-header">30-Day Adherence Overview</h3>
+                
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-value" id="adherence-rate">0%</div>
+                        <div class="stat-label">Adherence Rate</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="total-doses">0</div>
+                        <div class="stat-label">Total Doses</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="doses-taken">0</div>
+                        <div class="stat-label">Taken</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="doses-missed">0</div>
+                        <div class="stat-label">Missed</div>
+                    </div>
+                </div>
+
+                <div style="margin-top: 30px; text-align: center;">
+                    <canvas id="adherence-chart" width="400" height="300"></canvas>
+                </div>
+            </div>
+
+            <!-- Weekly Trend -->
+            <div class="card">
+                <h3 class="card-header">7-Day Trend</h3>
+                <canvas id="weekly-chart" width="800" height="300"></canvas>
+            </div>
+
+            <!-- Dose History Table -->
+            <div class="card">
+                <h3 class="card-header">Recent Dose History (Last 30 Days)</h3>
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Medication</th>
+                                <th>Dosage</th>
+                                <th>Scheduled Time</th>
+                                <th>Actual Time</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="history-table-body">
+                            <tr>
+                                <td colspan="5" class="text-center">Loading...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script src="/static/js/main.js"></script>
+    <script src="/static/js/reports.js"></script>
+</body>
+</html>

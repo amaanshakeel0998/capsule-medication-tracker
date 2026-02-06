@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Capsule Medication Tracker</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div>
+                <h1>💊 Capsule Medication Tracker</h1>
+                <p class="header-subtitle">AI-Powered Medication Management System</p>
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <nav class="nav">
+            <ul>
+                <li><a href="/">Dashboard</a></li>
+                <li><a href="/add-medication">Add Medication</a></li>
+                <li><a href="/schedule">Schedule</a></li>
+                <li><a href="/reports">Reports</a></li>
+                <li><a href="/ai-insights">AI Insights</a></li>
+            </ul>
+        </nav>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <h2 class="page-title">Dashboard</h2>
+            <p class="page-description">Overview of your medication tracking</p>
+
+            <!-- Statistics Cards -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value" id="total-medications">0</div>
+                    <div class="stat-label">Total Medications</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="taken-week">0</div>
+                    <div class="stat-label">Taken This Week</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="missed-week">0</div>
+                    <div class="stat-label">Missed This Week</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="delayed-week">0</div>
+                    <div class="stat-label">Delayed This Week</div>
+                </div>
+            </div>
+
+            <!-- Today's Schedule -->
+            <div class="card">
+                <h3 class="card-header">Today's Schedule</h3>
+                <div id="schedule-container">
+                    <div class="loading">Loading schedule...</div>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="card">
+                <h3 class="card-header">Quick Actions</h3>
+                <div class="flex gap-10">
+                    <a href="/add-medication" class="btn btn-primary">➕ Add New Medication</a>
+                    <a href="/reports" class="btn btn-secondary">📊 View Reports</a>
+                    <a href="/ai-insights" class="btn btn-secondary">🤖 AI Insights</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script src="/static/js/main.js"></script>
+    <script src="/static/js/notifications.js"></script>
+</body>
+</html>

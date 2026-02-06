@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Schedule - Capsule Medication Tracker</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div>
+                <h1>💊 Capsule Medication Tracker</h1>
+                <p class="header-subtitle">AI-Powered Medication Management System</p>
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <nav class="nav">
+            <ul>
+                <li><a href="/">Dashboard</a></li>
+                <li><a href="/add-medication">Add Medication</a></li>
+                <li><a href="/schedule">Schedule</a></li>
+                <li><a href="/reports">Reports</a></li>
+                <li><a href="/ai-insights">AI Insights</a></li>
+            </ul>
+        </nav>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <h2 class="page-title">Medication Schedule</h2>
+            <p class="page-description">View and manage all your medications</p>
+
+            <div class="card">
+                <h3 class="card-header">All Medications</h3>
+                <div id="medications-container">
+                    <div class="loading">Loading medications...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div id="delete-modal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <h3>Confirm Delete</h3>
+            <p>Are you sure you want to delete this medication? This will also delete all associated dose history.</p>
+            <div class="modal-actions">
+                <button class="btn btn-danger" onclick="confirmDelete()">Yes, Delete</button>
+                <button class="btn btn-secondary" onclick="closeDeleteModal()">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script src="/static/js/main.js"></script>
+    <script>
+        let medicationToDelete = null;
+
+        // Load and display all medications
+        async function displayAllMedications() {
+            const result = await fetch('/api/medications');
+            const data = await result.json();
+
+            const container = document.getElementById('medications-container');
+
+            if (!data.success || data.data.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">📋</div>
+                        <p>No medications added yet</p>
+                        <a href="/add-medication" class="btn btn-primary mt-20">Add Your First Medication</a>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = '';
+
+            data.data.forEach(med => {
+                const medCard = document.createElement('div');
+                medCard.className = 'medication-card';
+                
+                const scheduleList = med.schedules.map(time => {
+                    const [hours, minutes] = time.split(':');
+                    const hour = parseInt(hours);
+                    const ampm = hour >= 12 ? 'PM' : 'AM';
+                    const displayHour = hour % 12 || 12;
+                    return `<li>🕐 ${displayHour}:${minutes} ${ampm}</li>`;
+                }).join('');
+
+                medCard.innerHTML = `
+                    <div class="medication-header">
+                        <div>
+                            <h3>${med.name}</h3>
+                            <p class="medication-dosage">Dosage: ${med.dosage}</p>
+                        </div>
+                        <div class="medication-actions">
+                            <button class="btn btn-primary btn-small" onclick="editMedication(${med.id})">
+                                ✏️ Edit
+                            </button>
+                            <button class="btn btn-danger btn-small" onclick="deleteMedication(${med.id})">
+                                🗑️ Delete
+                            </button>
+                        </div>
+                    </div>
+                    <div class="medication-schedule">
+                        <strong>📅 Schedule Times:</strong>
+                        <ul>${scheduleList}</ul>
+                    </div>
+                `;
+
+                container.appendChild(medCard);
+            });
+        }
+
+        // Edit medication
+        function editMedication(id) {
+            window.location.href = `/edit-medication/${id}`;
+        }
+
+        // Delete medication (show confirmation)
+        function deleteMedication(id) {
+            medicationToDelete = id;
+            document.getElementById('delete-modal').style.display = 'flex';
+        }
+
+        // Confirm delete
+        async function confirmDelete() {
+            if (!medicationToDelete) return;
+
+            try {
+                const response = await fetch(`/api/medications/${medicationToDelete}`, {
+                    method: 'DELETE'
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    alert('Medication deleted successfully!');
+                    closeDeleteModal();
+                    displayAllMedications(); // Reload list
+                } else {
+                    alert('Failed to delete medication: ' + data.message);
+                }
+            } catch (error) {
+                console.error('Error deleting medication:', error);
+                alert('Failed to delete medication');
+            }
+        }
+
+        // Close delete modal
+        function closeDeleteModal() {
+            document.getElementById('delete-modal').style.display = 'none';
+            medicationToDelete = null;
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            displayAllMedications();
+        });
+    </script>
+
+    <!-- Modal Styles -->
+    <style>
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-content {
+            background: white;
+            padding: 40px;
+            border-radius: 16px;
+            max-width: 500px;
+            width: 90%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: slideUp 0.3s ease;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .modal-content h3 {
+            font-size: 24px;
+            margin-bottom: 15px;
+            color: #1a202c;
+        }
+
+        .modal-content p {
+            color: #4a5568;
+            margin-bottom: 25px;
+            line-height: 1.6;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 15px;
+            justify-content: flex-end;
+        }
+
+        .medication-card {
+            background: white;
+            border: none;
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .medication-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+        }
+
+        .medication-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #edf2f7;
+        }
+
+        .medication-header h3 {
+            font-size: 22px;
+            color: #1a202c;
+            margin-bottom: 8px;
+            font-weight: 700;
+        }
+
+        .medication-dosage {
+            color: #718096;
+            font-size: 15px;
+        }
+
+        .medication-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .medication-schedule {
+            background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
+            padding: 20px;
+            border-radius: 10px;
+        }
+
+        .medication-schedule strong {
+            color: #2d3748;
+            font-size: 15px;
+            display: block;
+            margin-bottom: 12px;
+        }
+
+        .medication-schedule ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .medication-schedule li {
+            color: #4a5568;
+            padding: 8px 0;
+            font-size: 15px;
+            font-weight: 500;
+        }
+    </style>
+</body>
+</html>

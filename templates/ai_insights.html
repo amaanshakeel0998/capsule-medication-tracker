@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Insights - Capsule Medication Tracker</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div>
+                <h1>💊 Capsule Medication Tracker</h1>
+                <p class="header-subtitle">AI-Powered Medication Management System</p>
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <nav class="nav">
+            <ul>
+                <li><a href="/">Dashboard</a></li>
+                <li><a href="/add-medication">Add Medication</a></li>
+                <li><a href="/schedule">Schedule</a></li>
+                <li><a href="/reports">Reports</a></li>
+                <li><a href="/ai-insights">AI Insights</a></li>
+            </ul>
+        </nav>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <h2 class="page-title">🤖 AI Insights & Predictions</h2>
+            <p class="page-description">Machine learning analysis of your medication behavior</p>
+
+            <!-- AI Overview -->
+            <div class="card">
+                <h3 class="card-header">How AI Helps You</h3>
+                <p style="color: #4a5568; line-height: 1.6;">
+                    Our AI system uses <strong>Logistic Regression</strong> machine learning to analyze your medication-taking patterns. 
+                    It considers factors like time of day, day of week, recent adherence history, and delay patterns to predict 
+                    the likelihood of missing upcoming doses. This helps you stay on track with personalized alerts.
+                </p>
+            </div>
+
+            <!-- Today's Predictions -->
+            <div class="card">
+                <h3 class="card-header">Today's Dose Predictions</h3>
+                <div id="predictions-container">
+                    <div class="loading">Analyzing your patterns...</div>
+                </div>
+            </div>
+
+            <!-- Behavioral Patterns -->
+            <div class="card">
+                <h3 class="card-header">Detected Behavioral Patterns</h3>
+                <div id="patterns-container">
+                    <div class="loading">Detecting patterns...</div>
+                </div>
+            </div>
+
+            <!-- General Insights -->
+            <div class="card">
+                <h3 class="card-header">Personalized Insights</h3>
+                <div id="insights-container">
+                    <div class="loading">Generating insights...</div>
+                </div>
+            </div>
+
+            <!-- Model Training -->
+            <div class="card">
+                <h3 class="card-header">AI Model Management</h3>
+                <p style="color: #4a5568; margin-bottom: 15px;">
+                    The AI model learns from your history. You can retrain it to improve predictions.
+                </p>
+                <button class="btn btn-primary" onclick="trainModel()">
+                    🔄 Retrain AI Model
+                </button>
+                <p id="training-status" style="margin-top: 10px; color: #718096;"></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script src="/static/js/main.js"></script>
+    <script>
+        // Load predictions
+        async function loadPredictions() {
+            const result = await fetch('/api/ai/predictions');
+            const data = await result.json();
+
+            const container = document.getElementById('predictions-container');
+
+            if (!data.success || data.data.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <p>No predictions available. Add medications to get started.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = '';
+
+            data.data.forEach(pred => {
+                const prediction = pred.prediction;
+                const riskLevel = prediction.risk_level;
+                
+                let riskColor = '';
+                if (riskLevel === 'high') riskColor = 'red';
+                else if (riskLevel === 'medium') riskColor = 'orange';
+                else if (riskLevel === 'low') riskColor = 'green';
+
+                const predItem = document.createElement('div');
+                predItem.className = 'prediction-item';
+                
+                const scheduledTime = new Date(pred.scheduled_time);
+                const timeStr = scheduledTime.toLocaleTimeString('en-US', { 
+                    hour: '2-digit', 
+                    minute: '2-digit' 
+                });
+
+                predItem.innerHTML = `
+                    <div class="prediction-header">
+                        <h3>${pred.medication_name}</h3>
+                        <span class="badge badge-${riskLevel}">${riskLevel.toUpperCase()} RISK</span>
+                    </div>
+                    <div class="prediction-body">
+                        <p><strong>Scheduled:</strong> ${timeStr}</p>
+                        <p><strong>Prediction:</strong> ${prediction.message}</p>
+                        <div class="risk-indicator">
+                            <div class="risk-bar ${riskLevel}" style="width: ${prediction.probability * 100}%"></div>
+                        </div>
+                    </div>
+                `;
+
+                container.appendChild(predItem);
+            });
+        }
+
+        // Load patterns
+        async function loadPatterns() {
+            const result = await fetch('/api/ai/detect-patterns');
+            const data = await result.json();
+
+            const container = document.getElementById('patterns-container');
+
+            if (!data.success || data.data.patterns.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <p>No patterns detected yet. Keep tracking to see insights.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = '';
+
+            data.data.patterns.forEach(pattern => {
+                let className = 'info';
+                if (pattern.severity === 'high') className = 'alert';
+                else if (pattern.severity === 'medium') className = 'warning';
+                else if (pattern.severity === 'positive') className = 'success';
+
+                const patternCard = document.createElement('div');
+                patternCard.className = `insight-card ${className}`;
+                patternCard.innerHTML = `
+                    <h4>${pattern.type.replace(/_/g, ' ').toUpperCase()}</h4>
+                    <p>${pattern.description}</p>
+                `;
+
+                container.appendChild(patternCard);
+            });
+        }
+
+        // Load insights
+        async function loadInsights() {
+            const result = await fetch('/api/ai/insights');
+            const data = await result.json();
+
+            const container = document.getElementById('insights-container');
+
+            if (!data.success || data.data.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <p>Not enough data to generate insights yet.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = '';
+
+            data.data.forEach(insight => {
+                const insightCard = document.createElement('div');
+                insightCard.className = `insight-card ${insight.type}`;
+                insightCard.innerHTML = `<p>${insight.message}</p>`;
+                container.appendChild(insightCard);
+            });
+        }
+
+        // Train model
+        async function trainModel() {
+            const statusElement = document.getElementById('training-status');
+            statusElement.textContent = 'Training model... Please wait.';
+            statusElement.style.color = '#4299e1';
+
+            const result = await fetch('/api/ai/train-model', {
+                method: 'POST'
+            });
+
+            const data = await result.json();
+
+            if (data.success) {
+                statusElement.textContent = '✓ Model trained successfully!';
+                statusElement.style.color = '#48bb78';
+                
+                // Reload predictions
+                setTimeout(() => {
+                    loadPredictions();
+                }, 1000);
+            } else {
+                statusElement.textContent = '✗ ' + data.message;
+                statusElement.style.color = '#f56565';
+            }
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            loadPredictions();
+            loadPatterns();
+            loadInsights();
+        });
+    </script>
+</body>
+</html>

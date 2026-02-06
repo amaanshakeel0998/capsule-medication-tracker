@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Medication - Capsule Medication Tracker</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div>
+                <h1>💊 Capsule Medication Tracker</h1>
+                <p class="header-subtitle">AI-Powered Medication Management System</p>
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <nav class="nav">
+            <ul>
+                <li><a href="/">Dashboard</a></li>
+                <li><a href="/add-medication">Add Medication</a></li>
+                <li><a href="/schedule">Schedule</a></li>
+                <li><a href="/reports">Reports</a></li>
+                <li><a href="/ai-insights">AI Insights</a></li>
+            </ul>
+        </nav>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <h2 class="page-title">Add New Medication</h2>
+            <p class="page-description">Enter medication details and schedule</p>
+
+            <div class="card">
+                <form id="add-medication-form">
+                    <!-- Medication Name -->
+                    <div class="form-group">
+                        <label class="form-label" for="med-name">Medication Name *</label>
+                        <input type="text" id="med-name" class="form-input" 
+                               placeholder="e.g., Aspirin, Vitamin D" required>
+                    </div>
+
+                    <!-- Dosage -->
+                    <div class="form-group">
+                        <label class="form-label" for="med-dosage">Dosage *</label>
+                        <input type="text" id="med-dosage" class="form-input" 
+                               placeholder="e.g., 500mg, 2 tablets" required>
+                    </div>
+
+                    <!-- Schedule Times -->
+                    <div class="form-group">
+                        <label class="form-label">Schedule Times *</label>
+                        <p style="color: #718096; font-size: 14px; margin-bottom: 10px;">
+                            Add one or more times when you need to take this medication
+                        </p>
+                        
+                        <div id="time-inputs-container" class="time-inputs-container">
+                            <div class="time-input-group">
+                                <input type="time" class="form-input time-input" required>
+                                <button type="button" class="btn btn-remove-time" onclick="removeTimeInput(this)">Remove</button>
+                            </div>
+                        </div>
+                        
+                        <button type="button" class="btn btn-add-time mt-20" onclick="addTimeInput()">
+                            ➕ Add Another Time
+                        </button>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <div class="form-group mt-20">
+                        <button type="submit" class="btn btn-primary">
+                            ✓ Add Medication
+                        </button>
+                        <a href="/" class="btn btn-secondary" style="margin-left: 10px;">
+                            Cancel
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script src="/static/js/main.js"></script>
+    <script>
+        // Add time input field
+        function addTimeInput() {
+            const container = document.getElementById('time-inputs-container');
+            const newInput = document.createElement('div');
+            newInput.className = 'time-input-group';
+            newInput.innerHTML = `
+                <input type="time" class="form-input time-input" required>
+                <button type="button" class="btn btn-remove-time" onclick="removeTimeInput(this)">Remove</button>
+            `;
+            container.appendChild(newInput);
+        }
+
+        // Remove time input field
+        function removeTimeInput(button) {
+            const container = document.getElementById('time-inputs-container');
+            if (container.children.length > 1) {
+                button.parentElement.remove();
+            } else {
+                alert('You must have at least one schedule time');
+            }
+        }
+
+        // Handle form submission
+        document.getElementById('add-medication-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const name = document.getElementById('med-name').value;
+            const dosage = document.getElementById('med-dosage').value;
+            
+            // Get all time inputs
+            const timeInputs = document.querySelectorAll('.time-input');
+            const schedules = Array.from(timeInputs).map(input => input.value);
+
+            if (schedules.length === 0) {
+                alert('Please add at least one schedule time');
+                return;
+            }
+
+            // Call API
+            const result = await fetch('/api/medications', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    name: name,
+                    dosage: dosage,
+                    schedules: schedules
+                })
+            });
+
+            const data = await result.json();
+
+            if (data.success) {
+                alert('Medication added successfully!');
+                window.location.href = '/';
+            } else {
+                alert('Failed to add medication: ' + data.message);
+            }
+        });
+    </script>
+</body>
+</html>
