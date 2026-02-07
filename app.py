@@ -1,6 +1,3 @@
-# app.py
-# Main Flask application for Capsule Medication Tracker
-
 from flask import Flask, render_template, request, jsonify
 from datetime import datetime, timedelta
 import config
