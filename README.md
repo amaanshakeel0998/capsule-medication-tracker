@@ -211,48 +211,6 @@ The AI model automatically trains when you have at least **10 historical records
 - Weekly trend bar chart
 - Complete dose history table
 
----
-
-## 🎓 For Viva/Presentation
-
-### **Key Points to Explain:**
-
-1. **Why AI?**
-   - Healthcare requires predictive systems
-   - Helps users improve adherence
-   - Reduces medication errors
-
-2. **ML Algorithm Choice:**
-   - Logistic Regression is simple and effective
-   - Provides interpretable results
-   - Suitable for binary classification
-
-3. **Real-World Application:**
-   - 50% of patients don't take medications correctly
-   - AI can improve health outcomes
-   - Reduces hospital readmissions
-
-4. **Technical Implementation:**
-   - Flask backend for API endpoints
-   - SQLite for lightweight database
-   - scikit-learn for ML operations
-   - Vanilla JavaScript for frontend
-
----
-
-## 🔮 Future Enhancements
-
-1. **User Authentication**: Multi-user support with login
-2. **Mobile App**: Native iOS/Android applications
-3. **Advanced ML**: Deep learning for better predictions
-4. **Doctor Integration**: Share reports with healthcare providers
-5. **Medication Interactions**: Check for drug conflicts
-6. **SMS Reminders**: Text message notifications
-7. **Family Sharing**: Track medications for dependents
-8. **Prescription Scanning**: OCR to auto-add medications
-
----
-
 ## 🐛 Troubleshooting
 
 ### **Database Errors:**
@@ -274,10 +232,10 @@ The AI model automatically trains when you have at least **10 historical records
 
 ## 👨‍💻 Developer Information
 
-**Project Type**: Artificial Intelligence Semester Project
-**Developer Name**: Muhammad Amaan
-**Difficulty Level**: Beginner-Friendly  
-**Estimated Completion Time**: 4-6 weeks  
+**Project Type**: Artificial Intelligence Semester Project <br>
+**Developer Name**: Muhammad Amaan<br>
+**Difficulty Level**: Beginner-Friendly <br> 
+**Estimated Completion Time**: 4-6 weeks <br>
 **Lines of Code**: ~1500  
 
 ---
